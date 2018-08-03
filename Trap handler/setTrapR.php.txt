@@ -1,0 +1,19 @@
+<?php
+   include('config.php');
+   
+   $sql =<<<EOF
+      CREATE TABLE IF NOT EXISTS st(ID INTEGER  PRIMARY KEY AUTOINCREMENT,ip VARCHAR NOT NULL,port INT NOT NULL,community STRING NOT NULL);
+
+      INSERT INTO st (IP,PORT,Community)VALUES ("$_GET[ip]",$_GET[port],"$_GET[community]");
+      
+EOF;
+
+   $ret = $db->exec($sql);
+   if(!$ret){
+      echo "FALSE";
+   }else{
+	echo "OK";
+}
+	
+   $db->close();
+?>

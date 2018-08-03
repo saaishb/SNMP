@@ -1,0 +1,14 @@
+<?php
+   include('config.php');
+	$query = "SELECT * FROM st WHERE ID =(SELECT MAX(ID) FROM st)";
+  $result = $db->query($query);
+  if($result){
+  while($row = $result->fetchArray(SQLITE3_ASSOC) ) {
+      			echo   $row['community']."@".$row['ip'] .":". $row['port'];
+     }}
+   if($result->fetchArray(SQLITE3_ASSOC)==0){
+      echo "FALSE";
+   }
+	
+
+?>

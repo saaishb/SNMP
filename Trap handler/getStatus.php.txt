@@ -1,0 +1,15 @@
+<?php
+  include('config.php');
+	$query = "SELECT * FROM th";
+  $result = $db->query($query);
+  if($result){
+  while($row = $result->fetchArray(SQLITE3_ASSOC) ) {
+      			echo   $row['DN']." | ".$row['NS']." | ".$row['NT']." | ".$row['OS']." | ".$row['OT']."\n";
+			
+     }}
+   if($result->fetchArray(SQLITE3_ASSOC)==0){
+      echo "FALSE";
+   }
+	
+
+?>

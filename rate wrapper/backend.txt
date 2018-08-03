@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+from subprocess import Popen,PIPE,STDOUT
+import sys,subprocess,os
+a = sys.argv
+print len(a)
+command = 'unbuffer /tmp/A2/prober'
+for i in range(1,len(a)):
+	
+	command = command +' '+ a[i]
+	if i==2 :
+		command = command +' '+'-1'
+print command
+p=subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,bufsize =0)
+while True:
+	x = p.stdout.readline()
+	b = x.split('|')
+        print x
+	
+	for k in range(3,len(a)):
+                print k,"--",a[k],"--",b[k-2],"--",b[0]
+		os.system("curl -XPOST 'http://localhost:8086/write?db=A3&u=ats&p=atslabb00&precision=s' --data-binary 'rate,oid='%s' value=%s %s'"%(a[k],float(b[k-2]),b[0]))
+

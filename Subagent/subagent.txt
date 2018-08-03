@@ -1,0 +1,69 @@
+#!usr/bin/perl
+
+
+use NetSNMP::agent (':all');
+use NetSNMP::ASN;
+use NetSNMP::OID;
+
+sub hello_handler
+{
+	my ($handler, $registration_info, $req_info, $requests) = @_;
+	my $req;
+	for($req = $requests; $req; $req = $req->next()) 
+	{
+		my $full_oid = $req->getOID();
+		my @oidarray = split/[.]/,$full_oid;
+		my $split_oid = $oidarray[-1];
+		if ($req_info->getMode() == MODE_GET)
+		{
+			if ($full_oid > new NetSNMP::OID("1.3.6.1.4.1.4171.40.1")) 
+			{
+				$tid = time();
+				open my $fh, '<',"/tmp/A1/counters.conf";
+				my @filelines = <$fh>;
+				close $fh;
+				$size = @filelines;
+				my @id=();
+				my @counter=();
+				for (my $i=0; $i <= $size-1; $i++) 
+				{
+					my %keyvalues =  split(/[,]/, $filelines[$i]);
+					foreach my $k (keys %keyvalues)
+					{
+						push @id,"$k";
+						push @counter,"$keyvalues{$k}";		
+					}
+				}
+				$cntr= 'error';
+				for (my $a=0; $a <= $size-1; $a++) 
+				{
+	
+					if($id[$a] == $split_oid-1)
+					{
+						$cntr = "$counter[$a]\n";
+						my $y = $cntr * $tid;
+						$req->setValue(ASN_COUNTER,$y);
+					}
+					else
+					{
+						$cntr = "error";
+	
+					}
+				}
+			}
+			elsif($full_oid == new NetSNMP::OID("1.3.6.1.4.1.4171.40.1"))
+			{
+				$req->setValue(ASN_COUNTER,time);
+				
+
+			}
+
+		}
+	}
+}
+
+my $agent = new NetSNMP::agent();
+$agent->register("saaish", "1.3.6.1.4.1.4171.40", \&hello_handler);
+
+
+
